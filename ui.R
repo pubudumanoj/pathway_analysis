@@ -11,23 +11,77 @@ library(shiny)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
-
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins
+  
+    
+    
+    title = "Pathway Analysis",
+    
+    plotOutput('plot'),
+    
+    hr(),
+    titlePanel( h4("Pathway Enrichment Analysis", align = "center")),
     sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+      sidebarPanel(
+        fileInput(inputId = "file", label = "Insert gene list"),
+        tags$h4("or", style="text-align: center;"),
+        textAreaInput(inputId = "genelist", label = "Paste Gene list here"),
+        selectInput("org", "Select organism",
+                    c("hsa")
+                        ),
+        selectInput("genetype", "Input gene ID type", selected = "Symbol",
+                    c("Symbol","Entrez",  "hgnc", "ensembl", "fullname", "uniprotswissprot")
         ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-            plotOutput("distPlot")
-        )
+        checkboxGroupInput("dbs", "Choose Databases:",
+                           choiceNames =
+                             c("Kegg", "Reactome", "GO"),
+                           choiceValues =
+                             c("Kegg", "Reactome", "GO"),
+                           selected = c("Kegg", "Reactome", "GO")
+        ),
+        
+        fluidRow(column(12, align="center", offset = 0, div(actionButton(inputId = "showpathways", "Show Pathways")),
+                        
+        )),
+       
+      ),
+      
+      # Show a plot of the generated distribution
+      mainPanel(
+        tags$h4("Change options"),
+        tabsetPanel(
+          tabPanel("Kegg", br(),
+                   selectInput("keggfdr", "P Adjusted method", selected = "BH",
+                               c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
+                   ),
+                   textInput("keggqvalue", "q value", value = 0.05),
+                   textInput("keggpvalue", "p value", value = 0.05),
+                   sliderInput("keggGsize", "Minimum gene count:",
+                               min = 1, max = 30,
+                               value = 10)
+                   ),
+          tabPanel("Reactome", br(),
+                   selectInput("reactomefdr", "P Adjusted method", selected = "BH",
+                               c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
+                   ),
+                   textInput("reactomeqvalue", "q value", value = 0.05),
+                   textInput("reactomepvalue", "p value", value = 0.05),
+                   sliderInput("reactomeGsize", "Minimum gene count:",
+                               min = 1, max = 30,
+                               value = 10)
+                   ),
+          tabPanel("Go", br(), 
+                   selectInput("gofdr", "P Adjusted method", selected = "BH",
+                               c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
+                   ),
+                   textInput("goqvalue", "q value", value = 0.05),
+                   textInput("gopvalue", "p value", value = 0.05),
+                   sliderInput("goGsize", "Minimum gene count:",
+                               min = 1, max = 30,
+                               value = 10),
+                   tableOutput("table"))
+        ),
+        tags$h1("Hello")
+        
+      )
     )
-))
+    ))
