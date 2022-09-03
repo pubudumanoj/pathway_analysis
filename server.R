@@ -85,40 +85,22 @@ shinyServer(function(input, output, session) {
     #################             Manhattan plot for all tested databases      ##################
     #############################################################################################
     
-    
-      
-    
-      
-      
-      
-      # Plot
-      
-      
      
       Manhattan_data <- ""
-      #if("Kegg" %in% input$dbs & "Reactome" %in% input$dbs & "GO" %in% input$dbs){
-       # Manhattan_data <- rbind(Manhattan_GO, Manhattan_Reactome, Manhattan_KEGG)
-      #} else if()
-      
-      if("Kegg" %in% input$dbs){
-        Manhattan_data <- Manhattan_KEGG
-        if("Reactome" %in% input$dbs){
-          Manhattan_data <- rbind(Manhattan_data, Manhattan_Reactome)
-          if ("GO" %in% input$dbs){
-            print(input$dbs)
-            Manhattan_data <- rbind(Manhattan_GO, Manhattan_data)
-  }
-        } else if ("GO" %in% input$dbs){
-          Manhattan_data <- rbind(Manhattan_GO, Manhattan_data)
-        }
-      } else if("Reactome" %in% input$dbs){
-        Manhattan_data <- Manhattan_Reactome
-        if ("GO" %in% input$dbs){
-          Manhattan_data <- rbind(Manhattan_GO, Manhattan_data)
-        }
-      } else if ("GO" %in% input$dbs){
-        Manhattan_data <- Manhattan_GO
-      }
+     
+      manhat <- list()
+
+    
+    if("Kegg" %in% input$dbs){
+      manhat <- c(manhat, list(Manhattan_KEGG))
+    } 
+    if ("Reactome" %in% input$dbs){
+      manhat <- c(manhat, list(Manhattan_Reactome))
+    }
+    if ("GO" %in% input$dbs){
+      manhat <- c(manhat, list(Manhattan_GO))
+    }
+      Manhattan_data <- bind_rows(manhat)
       
       
       Manhattan_data <- Manhattan_data[order(Manhattan_data$ID),]
