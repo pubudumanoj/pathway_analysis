@@ -23,18 +23,30 @@ shinyServer(function(input, output, session) {
   
   #create a reactive object from QR code in order to use later
   file.data <- reactive({
-    filelistgene <- input$file
-    
-    if (is.null(filelistgene))
-      return(NULL)
-    file1 <- filelistgene$datapath
-    return(file1)
+    filelistgene <- input$file$datapath
+    return(filelistgene)
   })
+  
+  
   
   find_pathways <- reactive({
     
+    if(is.null(file.data()) & input$genelist == ""){
+      showModal(modalDialog(
+        title = "Warning",
+        "Please upload or paste a gene list",
+        easyClose = TRUE
+      ))
     
-    gene_list <- fread(file.data())
+    } else{
+      
+    if(input$genelist != ""){
+      gene_list <- strsplit(input$genelist, "\n") %>% unlist()
+      gene_list <- data.frame(AGRN=gene_list)
+    } else{
+      gene_list <- fread(file.data())
+      
+    }
     go_list <- list()
     fdr =input$fdr
     
@@ -137,7 +149,7 @@ shinyServer(function(input, output, session) {
       
     
     return(p)
-    
+  }
   })
   
   

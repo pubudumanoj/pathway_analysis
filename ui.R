@@ -90,7 +90,7 @@ shinyUI(fluidPage(
                                value = 10),
                    )
         ),
-        tags$h1("Hello")
+       
         
       )
     )
