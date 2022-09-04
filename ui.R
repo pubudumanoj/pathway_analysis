@@ -78,7 +78,17 @@ shinyUI(fluidPage(
                    sliderInput("goGsize", "Minimum gene count:",
                                min = 1, max = 30,
                                value = 10),
-                   tableOutput("table"))
+                   tableOutput("table")),
+          tabPanel("Final Figure", br(), 
+                   selectInput("fdrmethod", "P Adjusted method", selected = "BH",
+                               c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
+                   ),
+                   textInput("fdr", "FDR", value = 0.05),
+                   textInput("ftitle", "Figure Title", value = "Pathway Enrichment Analysis"),
+                   sliderInput("Gsize", "Minimum gene count:",
+                               min = 1, max = 30,
+                               value = 10),
+                   )
         ),
         tags$h1("Hello")
         

@@ -15,6 +15,7 @@ library(org.Hs.eg.db)
 library(ReactomePA)
 library(ggplot2)
 library(ggrepel)
+library(dplyr)
 
 
 # Define server logic required to draw a histogram
@@ -35,7 +36,7 @@ shinyServer(function(input, output, session) {
     
     gene_list <- fread(file.data())
     go_list <- list()
-    fdr =0.05
+    fdr =input$fdr
     
     i=1
     
@@ -105,15 +106,15 @@ shinyServer(function(input, output, session) {
       
       Manhattan_data <- Manhattan_data[order(Manhattan_data$ID),]
       Manhattan_data <- subset(Manhattan_data, Count >= 5)
-      Manhattan_data$BH_combined = p.adjust(Manhattan_data$pvalue, method = "BH")
+      Manhattan_data$BH_combined = p.adjust(Manhattan_data$pvalue, method = input$fdrmethod)
       Manhattan_data <- Manhattan_data[order(Manhattan_data$BH_combined),]
       
       # Manhattan plot 
       #check whether there are more significant pathways. if there are no significant pathways. there will be no lables
       if(dim(Manhattan_data)[1]>0){
-        Selected_terms <- c(if (dim(subset(Manhattan_data, BH_combined < fdr & Approach == "GO"))[1] > 10) subset(Manhattan_data, Approach == "GO")[1:10,"ID"] else subset(Manhattan_data, Approach == "GO")[1:dim(subset(Manhattan_data, BH_combined < fdr & Approach == "GO"))[1],"ID"], 
-                            if (dim(subset(Manhattan_data, BH_combined < fdr & Approach == "KEGG"))[1] > 10) subset(Manhattan_data, Approach == "KEGG")[1:5,"ID"] else subset(Manhattan_data, Approach == "KEGG")[1:dim(subset(Manhattan_data, BH_combined < fdr & Approach == "KEGG"))[1],"ID"],
-                            if (dim(subset(Manhattan_data, BH_combined < fdr & Approach == "Reactome"))[1] > 10) subset(Manhattan_data, Approach == "Reactome")[1:5,"ID"] else subset(Manhattan_data, Approach == "Reactome")[1:dim(subset(Manhattan_data, BH_combined < fdr & Approach == "Reactome"))[1],"ID"]
+        Selected_terms <- c(if (dim(subset(Manhattan_data, BH_combined < fdr & Approach == "GO"))[1] > input$Gsize) subset(Manhattan_data, Approach == "GO")[1:10,"ID"] else subset(Manhattan_data, Approach == "GO")[1:dim(subset(Manhattan_data, BH_combined < fdr & Approach == "GO"))[1],"ID"], 
+                            if (dim(subset(Manhattan_data, BH_combined < fdr & Approach == "KEGG"))[1] > input$Gsize) subset(Manhattan_data, Approach == "KEGG")[1:5,"ID"] else subset(Manhattan_data, Approach == "KEGG")[1:dim(subset(Manhattan_data, BH_combined < fdr & Approach == "KEGG"))[1],"ID"],
+                            if (dim(subset(Manhattan_data, BH_combined < fdr & Approach == "Reactome"))[1] > input$Gsize) subset(Manhattan_data, Approach == "Reactome")[1:5,"ID"] else subset(Manhattan_data, Approach == "Reactome")[1:dim(subset(Manhattan_data, BH_combined < fdr & Approach == "Reactome"))[1],"ID"]
         )
         
         
@@ -128,7 +129,7 @@ shinyServer(function(input, output, session) {
           geom_hline(yintercept = 1.3, color="black", linetype="dotted", size = 1) +
           ylim(0,25) +
           theme_bw() +
-          ggtitle(paste0(names(Genes_GeneHancer)[i]))+
+          ggtitle(input$ftitle)+
           theme(axis.title = element_text(size = 14, face = "bold"), axis.text.y = element_text(size = 12),
                 axis.title.x = element_blank(), axis.text.x = element_blank(), axis.ticks.x = element_blank(), panel.grid = element_blank())
         
