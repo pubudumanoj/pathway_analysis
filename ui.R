@@ -16,7 +16,7 @@ shinyUI(fluidPage(
     
     title = "Pathway Analysis",
     
-    plotOutput('plot'),
+    uiOutput("spinner"),
     
     hr(),
     titlePanel( h4("Pathway Enrichment Analysis", align = "center")),
@@ -25,6 +25,10 @@ shinyUI(fluidPage(
         fileInput(inputId = "file", label = "Insert gene list"),
         tags$h4("or", style="text-align: center;"),
         textAreaInput(inputId = "genelist", label = "Paste Gene list here"),
+        fluidRow(column(12, align="right", offset = 0, div(actionButton(inputId = "cleargenes", "clear gene set", style='padding:1px ;padding-right:10px; ;padding-left:10px; font-size:90%; color:red; '),
+                                                          actionButton(inputId = "testgenes", "test gene set", style='padding:1px ;padding-right:10px; ;padding-left:10px; font-size:90%; color:red; '), style='margin-top:-10; display:inline-block'),
+                        
+        )),
         selectInput("org", "Select organism",
                     c("hsa")
                         ),
@@ -36,7 +40,7 @@ shinyUI(fluidPage(
                              c("Kegg", "Reactome", "GO"),
                            choiceValues =
                              c("Kegg", "Reactome", "GO"),
-                           selected = c("Kegg", "Reactome", "GO")
+                           selected = c("Kegg", "Reactome")
         ),
         
         fluidRow(column(12, align="center", offset = 0, div(actionButton(inputId = "showpathways", "Show Pathways")),
@@ -55,7 +59,7 @@ shinyUI(fluidPage(
                    ),
                    textInput("keggqvalue", "q value", value = 0.05),
                    textInput("keggpvalue", "p value", value = 0.05),
-                   sliderInput("keggGsize", "Minimum gene count:",
+                   sliderInput("keggGsize", "Minimum gene count per pathway:",
                                min = 1, max = 30,
                                value = 10)
                    ),
@@ -65,7 +69,7 @@ shinyUI(fluidPage(
                    ),
                    textInput("reactomeqvalue", "q value", value = 0.05),
                    textInput("reactomepvalue", "p value", value = 0.05),
-                   sliderInput("reactomeGsize", "Minimum gene count:",
+                   sliderInput("reactomeGsize", "Minimum gene count per pathway:",
                                min = 1, max = 30,
                                value = 10)
                    ),
@@ -75,20 +79,22 @@ shinyUI(fluidPage(
                    ),
                    textInput("goqvalue", "q value", value = 0.05),
                    textInput("gopvalue", "p value", value = 0.05),
-                   sliderInput("goGsize", "Minimum gene count:",
+                   sliderInput("goGsize", "Minimum gene count per pathway:",
                                min = 1, max = 30,
-                               value = 10),
-                   tableOutput("table")),
+                               value = 10)),
           tabPanel("Final Figure", br(), 
                    selectInput("fdrmethod", "P Adjusted method", selected = "BH",
                                c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
                    ),
                    textInput("fdr", "FDR", value = 0.05),
                    textInput("ftitle", "Figure Title", value = "Pathway Enrichment Analysis"),
-                   sliderInput("Gsize", "Minimum gene count:",
+                   sliderInput("Gsize", "Minimum gene count per pathway:",
                                min = 1, max = 30,
                                value = 10),
-                   )
+                   ),
+          tabPanel("Output Table", br(), 
+                   DT::dataTableOutput("table")
+          )
         ),
        
         
