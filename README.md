@@ -1,7 +1,7 @@
 [![](https://img.shields.io/badge/Shiny-shinyapps.io-blue?style=flat&labelColor=white&logo=RStudio&logoColor=blue)](https://pubudumanoj.shinyapps.io/pathway_analysis/)
 [![Github All Releases](https://img.shields.io/github/downloads/pubudumanoj/pathway_analysis/total.svg)]()
 
-# Pathway Analysis
+# Pathway Enrichment Analysis
 This shiny app performs a pathway enrichment analysis using KEGG and Reactom databases utilizing the geneset provided by you. Currently it only supports human genes.
 
 ## Usage
